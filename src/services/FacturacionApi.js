@@ -4,6 +4,12 @@ import { useUserStore } from '@/stores/user'
 const url = 'https://lavu-facturacion-backend-production.up.railway.app'
 // const url = 'http://localhost:8080'
 
+export async function getUserData() {
+  const headers = obtenerAuthHeaders()
+  const result = await axios.get(`${url}/user`, { headers })
+  return result.data
+}
+
 export async function enviarFactura(payload) {
   const headers = obtenerAuthHeaders()
   const result = await axios.post(`${url}/facturar`, payload, { headers })

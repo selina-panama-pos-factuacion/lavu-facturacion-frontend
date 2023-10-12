@@ -38,18 +38,6 @@
                 <li>
                   Dirección: <span class="font-semibold">{{ direccionCliente }}</span>
                 </li>
-                <li>
-                  Código de la ubicación: <span class="font-semibold">{{ codigoProvincia }} - {{ codigoDistrito }} - {{ codigoCorregimiento }}</span>
-                </li>
-                <li>
-                  Provincia: <span class="font-semibold">{{ ubicacionObj.provincia ? ubicacionObj.provincia : '' }}</span>
-                </li>
-                <li>
-                  Distrito: <span class="font-semibold">{{ ubicacionObj.distrito ? ubicacionObj.distrito : '' }}</span>
-                </li>
-                <li>
-                  Corregimiento: <span class="font-semibold">{{ ubicacionObj.corregimiento ? ubicacionObj.corregimiento : '' }}</span>
-                </li>
               </div>
               <li>
                 Email: <span class="font-semibold">{{ emailCliente }}</span>
@@ -122,66 +110,24 @@
                 <Dropdown id="tipoRuc" v-model="tipoRuc" :options="tiposRuc" optionLabel="descripcion" optionValue="codigo" />
               </div>
               <div class="flex flex-column gap-2">
+                <label for="nombre">Nombre / Razón Social</label>
+                <InputText id="nombre" type="text" v-model="nombreRazonSocial" />
+              </div>
+              <div class="flex flex-column gap-2">
+                <label for="ruc">Número de identificación / RUC</label>
+                <InputText id="ruc" type="text" v-model="numeroDocumento" />
+              </div>
+              <div class="flex flex-column gap-2">
                 <label for="digitoVerificador">Dígito Verificador (DV)</label>
                 <InputText id="digitoVerificador" type="text" v-model="digitoVerificador" />
               </div>
               <div class="flex flex-column gap-2">
-                <label for="nombre">Nombre - Razón Social</label>
-                <InputText id="nombre" type="text" v-model="nombreRazonSocial" />
-              </div>
-              <div class="flex flex-column gap-2">
-                <label for="ruc">Número de identificación</label>
-                <InputText id="ruc" type="text" v-model="numeroDocumento" />
+                <label for="email">Email</label>
+                <InputText id="email" type="text" v-model="emailCliente" />
               </div>
               <div class="flex flex-column gap-2">
                 <label for="direccionCliente">Dirección</label>
                 <InputText id="direccionCliente" type="text" v-model="direccionCliente" />
-              </div>
-              <div>
-                <h4 class="mb-2">Código de ubicación</h4>
-                <div class="flex gap-4 w-25rem">
-                  <div class="flex flex-column gap-2 w-full">
-                    <label class="text-sm" for="codigoProvincia">PROVINCIA</label>
-                    <InputNumber
-                      id="codigoProvincia"
-                      type="text"
-                      v-model="codigoProvincia"
-                      :useGrouping="false"
-                      :pt="{
-                        input: { class: 'w-full' },
-                      }"
-                    />
-                  </div>
-                  <div class="flex flex-column gap-2 w-full">
-                    <label class="text-sm" for="codigoDistrito">DISTRITO</label>
-                    <InputNumber
-                      id="codigoDistrito"
-                      type="text"
-                      v-model="codigoDistrito"
-                      :useGrouping="false"
-                      :pt="{
-                        input: { class: 'w-full' },
-                      }"
-                    />
-                  </div>
-                  <div class="flex flex-column gap-2 w-full">
-                    <label class="text-sm" for="codigoCorregimiento">CORREGIMIENTO</label>
-                    <InputNumber
-                      id="codigoCorregimiento"
-                      type="text"
-                      v-model="codigoCorregimiento"
-                      :useGrouping="false"
-                      :pt="{
-                        input: { class: 'w-full' },
-                      }"
-                    />
-                  </div>
-                </div>
-                <Transition>
-                  <div class="mt-3 text-sm font-semibold" v-if="showLabelUbicacion">
-                    UBICACIÓN: <span class="text-sm font-semibold">{{ labelUbicacion }}</span>
-                  </div>
-                </Transition>
               </div>
             </div>
             <div v-else class="flex flex-column gap-4">
@@ -206,10 +152,10 @@
                 <label for="ruc">Número de identidad</label>
                 <InputText id="ruc" type="text" v-model="numeroDocumento" />
               </div>
-            </div>
-            <div class="flex flex-column gap-2">
-              <label for="email">Email</label>
-              <InputText id="email" type="text" v-model="emailCliente" />
+              <div class="flex flex-column gap-2">
+                <label for="email">Email</label>
+                <InputText id="email" type="text" v-model="emailCliente" />
+              </div>
             </div>
           </div>
         </div>
@@ -230,13 +176,13 @@
   import ProgressBar from 'primevue/progressbar'
   import LoadingOverlay from '@/components/LoadingOverlay.vue'
   import InputText from 'primevue/inputtext'
-  import InputNumber from 'primevue/inputnumber'
   import AutoComplete from 'primevue/autocomplete'
   import Toast from 'primevue/toast'
   import { computed, onMounted, onUnmounted, ref } from 'vue'
+  import { useUserStore } from '@/stores/user'
   import { useToast } from 'primevue/usetoast'
   import { useConfirm } from 'primevue/useconfirm'
-  import { enviarFactura, initializeSSE, closeSSE, obtenerUltimoCierre } from '@/services/FacturacionApi.js'
+  import { closeSSE, enviarFactura, getUserData, initializeSSE, obtenerUltimoCierre } from '@/services/FacturacionApi.js'
   import getUbicacionDeCodigo, { codigosPaises } from '@/consts/CodigosUbicacion.js'
 
   const tiposContribuyente = [
@@ -265,9 +211,11 @@
     },
   ]
 
+  const userStore = useUserStore()
   const ultimoCierre = ref('')
   onMounted(async () => {
-    ultimoCierre.value = await obtenerUltimoCierre()
+    const userData = await getUserData()
+    userStore.setUserData({ userId: userData.id, nombre: userData.nombre })
   })
 
   // Form values
@@ -279,9 +227,9 @@
   const digitoVerificador = ref('')
   const numeroDocumento = ref('')
   const emailCliente = ref('')
-  const codigoCorregimiento = ref(0)
-  const codigoDistrito = ref(0)
-  const codigoProvincia = ref(0)
+  const codigoCorregimiento = ref(1)
+  const codigoDistrito = ref(8)
+  const codigoProvincia = ref(8)
   const direccionCliente = ref('')
   const paisSeleccionado = ref(null)
   const paisesFiltrados = ref([])
@@ -305,7 +253,6 @@
       return null
     }
   })
-  const showLabelUbicacion = computed(() => ubicacionObj.value !== null)
   const labelUbicacion = computed(() => {
     if (ubicacionObj.value) {
       return `${ubicacionObj.value.provincia} - ${ubicacionObj.value.distrito} - ${ubicacionObj.value.corregimiento}`
