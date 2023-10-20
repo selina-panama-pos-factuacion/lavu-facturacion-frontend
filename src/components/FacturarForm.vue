@@ -399,6 +399,7 @@
 
   const cierreDeDia = () => {
     try {
+      cierreModalClosable.value = false
       cierreModalVisible.value = true
       iniciarCierreDeDia()
     } catch (e) {

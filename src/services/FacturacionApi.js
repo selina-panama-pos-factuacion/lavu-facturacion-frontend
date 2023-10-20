@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useUserStore } from '@/stores/user'
 
-const url = 'https://www.selina-panama-lavu.app'
+const url = 'https://lavu-facturacion-api-d8146475889b.herokuapp.com'
 // const url = 'http://localhost:8080'
 
 export async function getUserData() {
