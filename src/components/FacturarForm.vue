@@ -399,6 +399,7 @@
 
   const cierreDeDia = () => {
     try {
+      hayErrorEnCierre.value = false
       cierreModalClosable.value = false
       cierreModalVisible.value = true
       iniciarCierreDeDia()
