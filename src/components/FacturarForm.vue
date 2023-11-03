@@ -162,7 +162,7 @@
       </Transition>
     </div>
     <Button :disabled="!enableFacturarBtn" class="my-5" label="FACTURAR" @click="confirmFactura" />
-    <Button class="my-5 mx-4" label="CIERRE DE DIA" @click="confirmCierreDeDia" />
+    <Button v-if="false" class="my-5 mx-4" label="CIERRE DE DIA" @click="confirmCierreDeDia" />
   </div>
 </template>
 
