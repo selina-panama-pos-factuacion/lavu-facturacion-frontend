@@ -9,6 +9,12 @@
             <li>
               Orden de LAVU: <span class="font-semibold">{{ orderId }}</span>
             </li>
+            <li>
+              Orden cerrada: <span class="font-semibold">{{ orderClosed }}</span>
+            </li>
+            <li>
+              Monto total: <span class="font-semibold">{{ orderTotal }}</span>
+            </li>
             <div v-if="esContribuyente">
               <li>
                 Tipo de contribuyente:
@@ -162,6 +168,7 @@
       </Transition>
     </div>
     <Button :disabled="!enableFacturarBtn" class="my-5" label="FACTURAR" @click="confirmFactura" />
+    <Button class="mx-4 my-5" label="LIMPIAR DATOS" @click="limpiarCampos" />
     <Button v-if="false" class="my-5 mx-4" label="CIERRE DE DIA" @click="confirmCierreDeDia" />
   </div>
 </template>
@@ -182,7 +189,7 @@
   import { useUserStore } from '@/stores/user'
   import { useToast } from 'primevue/usetoast'
   import { useConfirm } from 'primevue/useconfirm'
-  import { closeSSE, enviarFactura, getUserData, initializeSSE, obtenerUltimoCierre } from '@/services/FacturacionApi.js'
+  import { closeSSE, enviarFactura, getUserData, initializeSSE, obtenerUltimoCierre, getOrderData } from '@/services/FacturacionApi.js'
   import getUbicacionDeCodigo, { codigosPaises } from '@/consts/CodigosUbicacion.js'
 
   const tiposContribuyente = [
@@ -220,6 +227,8 @@
 
   // Form values
   const orderId = ref('')
+  const orderClosed = ref('')
+  const orderTotal = ref('')
   const esContribuyente = ref(false)
   const tipoRuc = ref(1)
   const codigoTipoContribuyente = ref(1)
@@ -261,7 +270,7 @@
   })
   const datosClienteCompletos = computed(() => {
     if (codigoTipoContribuyente.value !== 4) {
-      return nombreRazonSocial.value && numeroDocumento.value && direccionCliente.value && ubicacionObj.value && emailCliente.value
+      return nombreRazonSocial.value && numeroDocumento.value && direccionCliente.value && emailCliente.value && digitoVerificador.value
     } else {
       return nombreRazonSocial.value && numeroDocumento.value && paisSeleccionado.value && emailCliente.value
     }
@@ -286,7 +295,7 @@
   }
 
   const showFailToast = response => {
-    let detail = `Hubo un problema al facturar la orden ${orderId.value}`
+    let detail = `Hubo un problema al facturar la orden ${orderId.value} \n Revise que los datos estén correctos.`
     if (response.data && response.data.errors && response.data.errors.length > 0) {
       if (response.data.errors[0].startsWith('Ya se encuentra registrada una factura')) {
         detail = `La orden ${orderId.value} ya fue facturada previamente`
@@ -316,9 +325,12 @@
 
   const limpiarCampos = () => {
     orderId.value = ''
+    orderClosed.value = ''
+    orderTotal.value = ''
     esContribuyente.value = false
     codigoTipoContribuyente.value = 1
     nombreRazonSocial.value = ''
+    digitoVerificador.value = ''
     numeroDocumento.value = ''
     emailCliente.value = ''
     tipoRuc.value = 1
@@ -329,14 +341,21 @@
     direccionCliente.value = ''
   }
 
-  const confirmFactura = () => {
-    confirm.require({
-      header: 'Confirmación de factura',
-      icon: 'pi pi-exclamation-triangle',
-      accept: facturar,
-      acceptLabel: 'Sí',
-      reject: () => {},
-    })
+  const confirmFactura = async () => {
+    try {
+      const { cerrada, total } = await getOrderData(orderId.value)
+      orderClosed.value = cerrada
+      orderTotal.value = total
+      confirm.require({
+        header: 'Confirmación de factura',
+        icon: 'pi pi-exclamation-triangle',
+        accept: facturar,
+        acceptLabel: 'Sí',
+        reject: () => {},
+      })
+    } catch (error) {
+      showFailToast(error)
+    }
   }
 
   // Confirmar cierre de dia

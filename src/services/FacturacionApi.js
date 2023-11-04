@@ -27,6 +27,12 @@ export async function obtenerUltimoCierre() {
   return result.data
 }
 
+export async function getOrderData(orderId) {
+  const headers = obtenerAuthHeaders()
+  const result = await axios.get(`${url}/order/${orderId}`, { headers })
+  return result.data
+}
+
 export async function logout() {
   // localStorage.clear()
 }
