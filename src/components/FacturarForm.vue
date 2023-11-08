@@ -295,7 +295,7 @@
   }
 
   const showFailToast = response => {
-    let detail = `Hubo un problema al facturar la orden ${orderId.value} \n Revise que los datos estén correctos.`
+    let detail = `Hubo un problema al facturar la orden ${orderId.value}. \n Revise que los datos estén correctos.`
     if (response.data && response.data.errors && response.data.errors.length > 0) {
       if (response.data.errors[0].startsWith('Ya se encuentra registrada una factura')) {
         detail = `La orden ${orderId.value} ya fue facturada previamente`
