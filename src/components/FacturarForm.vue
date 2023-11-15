@@ -13,7 +13,7 @@
               Orden cerrada: <span class="font-semibold">{{ orderClosed }}</span>
             </li>
             <li>
-              Monto total: <span class="font-semibold">{{ orderTotal }}</span>
+              Monto total: <span class="font-semibold">${{ orderTotal }}</span>
             </li>
             <div v-if="esContribuyente">
               <li>
