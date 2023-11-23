@@ -308,6 +308,16 @@
     })
   }
 
+  const showWarningToast = () => {
+    let detail = `La DGI no ha confirmado la factura de la orden ${orderId.value}. \n Por favor confirme en GuruSoft más adelante.`
+
+    toast.add({
+      severity: 'warning',
+      summary: `Falta confirmar la factura de la orden ${orderId.value}`,
+      detail,
+    })
+  }
+
   // Confirmar factura
   const confirm = useConfirm()
   const tipoContribuyenteLabel = computed(() => {
@@ -449,8 +459,12 @@
         codigoProvincia: codigoProvincia.value,
         direccionCliente: direccionCliente.value.trim(),
       }
-      await enviarFactura(payload)
-      facturaExitosaToast()
+      const resultFactura = await enviarFactura(payload)
+      if (resultFactura.Estado === '20') {
+        showWarningToast()
+      } else {
+        facturaExitosaToast()
+      }
       limpiarCampos()
     } catch (e) {
       showFailToast(e.response)
