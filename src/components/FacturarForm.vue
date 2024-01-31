@@ -120,7 +120,7 @@
                 <InputText id="nombre" type="text" v-model="nombreRazonSocial" />
               </div>
               <div class="flex flex-column gap-2">
-                <label for="ruc">Número de identificación / RUC</label>
+                <label for="ruc">Número de cédula / RUC</label>
                 <InputText id="ruc" type="text" v-model="numeroDocumento" />
               </div>
               <div class="flex flex-column gap-2">
