@@ -15,6 +15,9 @@
             <li>
               Monto total: <span class="font-semibold">${{ orderTotal }}</span>
             </li>
+            <li>
+              Email: <span class="font-semibold">{{ emailCliente }}</span>
+            </li>
             <div v-if="esContribuyente">
               <li>
                 Tipo de contribuyente:
@@ -45,9 +48,6 @@
                   Dirección: <span class="font-semibold">{{ direccionCliente }}</span>
                 </li>
               </div>
-              <li>
-                Email: <span class="font-semibold">{{ emailCliente }}</span>
-              </li>
             </div>
           </ul>
         </div>
@@ -91,6 +91,10 @@
         <label for="orderId">Orden de LAVU</label>
         <InputText required id="orderId" type="text" v-model="orderId" />
       </div>
+      <div class="flex flex-column gap-2">
+        <label for="email">Email</label>
+        <InputText id="email" type="text" v-model="emailCliente" />
+      </div>
       <div class="card flex justify-content-center">
         <span>Consumidor Final</span>
         <InputSwitch class="mx-2" v-model="esContribuyente" />
@@ -128,10 +132,6 @@
                 <InputText id="digitoVerificador" type="text" v-model="digitoVerificador" />
               </div>
               <div class="flex flex-column gap-2">
-                <label for="email">Email</label>
-                <InputText id="email" type="text" v-model="emailCliente" />
-              </div>
-              <div class="flex flex-column gap-2">
                 <label for="direccionCliente">Dirección</label>
                 <InputText id="direccionCliente" type="text" v-model="direccionCliente" />
               </div>
@@ -157,10 +157,6 @@
               <div class="flex flex-column gap-2">
                 <label for="ruc">Número de identidad</label>
                 <InputText id="ruc" type="text" v-model="numeroDocumento" />
-              </div>
-              <div class="flex flex-column gap-2">
-                <label for="email">Email</label>
-                <InputText id="email" type="text" v-model="emailCliente" />
               </div>
             </div>
           </div>
