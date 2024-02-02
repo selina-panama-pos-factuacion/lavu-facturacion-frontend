@@ -441,7 +441,7 @@
       showLoadingSpinner.value = true
       const payload = {
         orderId: orderId.value.trim(),
-        labelUbicacion: labelUbicacion.value.trim(),
+        labelUbicacion: 'PANAMA - PANAMA - SAN FELIPE',
         digitoVerificador: digitoVerificador.value.trim(),
         esContribuyente: esContribuyente.value,
         codigoTipoContribuyente: codigoTipoContribuyente.value,
@@ -450,9 +450,9 @@
         emailCliente: emailCliente.value.trim(),
         tipoRuc: tipoRuc.value,
         paisSeleccionado: paisSeleccionado.value,
-        codigoCorregimiento: codigoCorregimiento.value,
-        codigoDistrito: codigoDistrito.value,
-        codigoProvincia: codigoProvincia.value,
+        codigoCorregimiento: 1,
+        codigoDistrito: 8,
+        codigoProvincia: 8,
         direccionCliente: direccionCliente.value.trim(),
       }
       const resultFactura = await enviarFactura(payload)
